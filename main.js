@@ -3,32 +3,7 @@ var wikipediaExportUrl = "http://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:%E3%83
 
 var statusMessageId = "status_message";
 
-var testData = false;
-
 function drawGraph(divID, data) {
-    if (testData) {
-
-        //testdata
-        var testNodeData = [];
-        for (var i; i < 20; i++) {
-            testNodeData.push({
-                title: "title",
-                key: i
-            });
-        }
-        var testLinkData = [{
-            source: 0,
-            target: 1
-        }, {
-            source: 2,
-            target: 3
-        }, {
-            source: 18,
-            target: 19
-        }];
-        data.nodes = testNodeData;
-        data.links = testLinkData;
-    }
     //documentGraph(divID,data);
     //bundleLayoutGraph(divID,data);
     forceLayoutGraph(divID, data);
@@ -334,29 +309,20 @@ function decodeWikipediaTitle(uri) {
 
 // Search history
 function buildWikipediaHistoryList(divName) {
-    var microsecondsPerWeek = 1000 * 60 * 60 * 24 * 7;
-    var oneWeekAgo = (new Date).getTime() - microsecondsPerWeek;
-    var oneMonthAgo = (new Date).getTime() - microsecondsPerWeek * 5;
-
     var numRequestsOutstanding = 0;
 
     var data;
     var nodes = [];
     var links = [];
 
-    var startTime = (new Date).getTime() - microsecondsPerWeek * 10;
-    var maxResults = 1000000; //100
-    if (testData) {
-        maxResults = 1;
-    }
+    var maxResults = 1000;
 
     chrome.history.search({
             'text': 'wikipedia',
             'startTime': 0,
-            'maxResults': 1000
+            'maxResults': maxResults
         },
         function(historyItems) {
-            console.log(historyItems);
 
             var wikipediaHistoryUrls = [];
 
@@ -365,6 +331,7 @@ function buildWikipediaHistoryList(divName) {
                 if (url.indexOf(wikipediaUrl) != -1) {
                     if (decodeWikipediaTitle(url).indexOf(":") == -1) {
                         wikipediaHistoryUrls.push(historyItems[i].url);
+                        console.log(historyItems[i].lastVisitTime);
                     }
                 }
             }
