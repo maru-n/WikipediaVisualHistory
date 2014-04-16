@@ -352,42 +352,21 @@ function buildWikipediaHistoryList(divName) {
                 var title = decodeWikipediaTitle(url);
                 var innerLinks = [];
 
-                if (true) {
-                    var text;
-                    $.ajax({
-                        type: "GET",
-                        url: wikipediaExportUrl + splitWikipediaTitle(url),
-                        dataType: "xml",
-                        ifModified: true,
-                        async: false,
-                        success: function(xml) {
-                            text = eval($(xml).find("text")).text();
-                        }
-                    });
-                    if (text) {
-                        var tmpLinks = text.match(/\[\[[^:]+?\]\]/g);
-                        for (var i = 0; i < tmpLinks.length; i++) {
-                            innerLinks.push(tmpLinks[i].split("[[")[1].split("]]")[0].split("|")[0]);
-                        }
+                var text;
+                $.ajax({
+                    type: "GET",
+                    url: wikipediaExportUrl + splitWikipediaTitle(url),
+                    dataType: "xml",
+                    ifModified: true,
+                    async: false,
+                    success: function(xml) {
+                        text = eval($(xml).find("text")).text();
                     }
-
-                } else {
-                    var alllinks;
-                    $.ajax({
-                        type: "GET",
-                        url: url,
-                        dataType: "html",
-                        ifModified: true,
-                        async: false,
-                        success: function(data) {
-                            alllinks = $("#mw-content-text a", data);
-                        }
-                    });
-                    for (var j = 0; j < alllinks.length; j++) {
-                        var href = alllinks.eq(j).attr("href");
-                        if (href.indexOf("/wiki/") != -1) {
-                            innerLinks.push(decodeWikipediaTitle(href));
-                        }
+                });
+                if (text) {
+                    var tmpLinks = text.match(/\[\[[^:]+?\]\]/g);
+                    for (var i = 0; i < tmpLinks.length; i++) {
+                        innerLinks.push(tmpLinks[i].split("[[")[1].split("]]")[0].split("|")[0]);
                     }
                 }
 
